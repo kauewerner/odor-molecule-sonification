@@ -1,9 +1,10 @@
 // Get sound parameters from IR data
 (
-var speedOfLight, freqFactor, erb, erbFactor, freqIdx, peaks, df, dfIdx;
+var speedOfLight, freqFactor, erb, erbFactor, freqIdx, peaks, df, dfIdx, baseFrequency = 440, baseScale, minIdx;
 speedOfLight = 3*(10**8); // speed of light
 freqFactor = (2**28); // frequency conversion factor
 erbFactor = 0.5;
+baseScale = baseFrequency*(2**(((-4*~numberOfSemitones),((-4*~numberOfSemitones) + 1)..(4*~numberOfSemitones))/~numberOfSemitones));
 /*~frequency = ();
 ~amplitude = ();
 ~spectrum = ();
@@ -16,7 +17,7 @@ erbFactor = 0.5;
 				~amplitude[molecule.asSymbol][wnIdx] = ~database[molecule.asSymbol][wnIdx][1].asFloat;
 			};
 			~amplitude[molecule.asSymbol] = ~amplitude[molecule.asSymbol]/(~amplitude[molecule.asSymbol].maxItem);
-			~spectrum[molecule.asSymbol] = ~frequency[molecule.asSymbol]/(~frequency[molecule.asSymbol].minItem);
+
 
 			freqIdx = (0..(~frequency[molecule.asSymbol].size-1));
 			peaks = []!~amplitude[molecule.asSymbol].size;
@@ -42,6 +43,13 @@ erbFactor = 0.5;
 				};
 			};
 			~scale[molecule.asSymbol] = ~frequency[molecule.asSymbol][freqIdx];
+
+	~scale[molecule.asSymbol].size.do{|sFreqIdx|
+		minIdx = ((~scale[molecule.asSymbol][sFreqIdx] - baseScale).abs).minIndex;
+		~scale[molecule.asSymbol][sFreqIdx] = baseScale[minIdx]
+	};
+	if(~flagScaleSpectrum,{~spectrum[molecule.asSymbol] = ~scale[molecule.asSymbol]/(~scale[molecule.asSymbol].minItem)},
+		{~spectrum[molecule.asSymbol] = ~frequency[molecule.asSymbol]/(~frequency[molecule.asSymbol].minItem)});
 };
 "Sound parameters were successfully extracted from the database\n".postln;
 "______________________________________________________________\n".postln;
