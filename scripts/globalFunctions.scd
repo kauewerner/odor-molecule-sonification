@@ -2,12 +2,14 @@
 //// Function: Volume adjusment based on octave ======================================= ////
 ~octave_level_factor = {|octave, min, max|
 	var return;
-	return = octave.linlin(min,max,1.0,0.25);
+	// return = octave.linlin(min,max,1.0,0.25);
+	1.0;
 };
 //// Function: Volume adjusment based on release ====================================== ////
 ~release_level_factor = {|release, min, max|
 	var return;
-	return = release.linlin(min,max,2.0,0.125);
+	// return = release.linlin(min,max,2.0,0.125);
+	1.0;
 };
 //// Function: Map input GUI element values (0 to 1) on a list ======================== ////
 ~map_on_list = { |input, list|
@@ -488,5 +490,4 @@
 	~flagLoadFile = False;
 };
 //// ===================================================================================== ////
-
 )

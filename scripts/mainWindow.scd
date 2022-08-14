@@ -11,7 +11,7 @@ w = Window.new("Odor Molecule Sonification",
 .alwaysOnTop_(true);
 //// Add selection Menu ================================================================ ////
 StaticText(w,Rect(w.bounds.width/3,w.bounds.height*0.025,2*w.bounds.width/3,w.bounds.height/12))
-.font_(Font.new(Font.defaultSansFace,22,true))
+.font_(Font.new(Font.defaultSansFace,14,true))
 .string_("Choose a molecule:");
 PopUpMenu.new(w,Rect(w.bounds.width/5,0.1*w.bounds.height,w.bounds.width/2,w.bounds.height/12))
 .items_(~moleculeNames)
@@ -65,7 +65,7 @@ StaticText(w,Rect(0.575*w.bounds.width,0.3*w.bounds.height,0.1*w.bounds.width,0.
 .stringColor_(Color.black)
 .string_("bpm");
 //// Add play/stop button ================================================================ ////
-~playStopAll = Button(w,Rect(w.bounds.height/6,w.bounds.height*0.825,w.bounds.height/5,w.bounds.height/12))
+~playStopAll = Button(w,Rect(w.bounds.height/8,w.bounds.height*0.85,w.bounds.height/5,w.bounds.height/12))
 .states_([
 ["play all",Color.black,Color.white],
 ["stop all",Color.white,Color.black],
@@ -87,8 +87,14 @@ StaticText(w,Rect(0.575*w.bounds.width,0.3*w.bounds.height,0.1*w.bounds.width,0.
 		};
 	});
 });
+//// Open meter button ================================================================ ////
+Button(w,Rect((w.bounds.height/3),w.bounds.height*0.85,w.bounds.height/5,w.bounds.height/12))
+.states_([["meter",Color.white, Color.blue]])
+	.action_({arg org;
+		s.meter;
+	});
 //// Add close all button ================================================================ ////
-Button(w,Rect((w.bounds.width/1.25) - (w.bounds.height/6),w.bounds.height*0.825,w.bounds.height/5,w.bounds.height/12))
+Button(w,Rect((w.bounds.width/1.25) - (w.bounds.height/6),w.bounds.height*0.85,w.bounds.height/5,w.bounds.height/12))
 .states_([
 ["close all",Color.white,Color.red]
 ])
@@ -105,7 +111,7 @@ Button(w,Rect((w.bounds.width/1.25) - (w.bounds.height/6),w.bounds.height*0.825,
 	});
 });
 //// Add load sequences option =========================================================== ////
-Button(w,Rect((w.bounds.width/1.25) - (w.bounds.height/6),w.bounds.height*0.5,w.bounds.height/4,w.bounds.height/12))
+Button(w,Rect((w.bounds.width/1.25) - (w.bounds.height/6),w.bounds.height*0.45,w.bounds.height/4,w.bounds.height/12))
 .states_([
 ["load sequence",Color.white,Color.black]
 ])
@@ -119,7 +125,7 @@ Button(w,Rect((w.bounds.width/1.25) - (w.bounds.height/6),w.bounds.height*0.5,w.
 		~bpmNB.valueAction_(~bpm);
 	})
 });
-~loadTextField = TextField(w,Rect(w.bounds.width*0.15,w.bounds.height*0.5,w.bounds.height/2.5,w.bounds.height/12))
+~loadTextField = TextField(w,Rect(w.bounds.width*0.15,w.bounds.height*0.45,w.bounds.height/2.5,w.bounds.height/12))
 .valueAction_(~loadFileName)
 .action_(
 	{|obj|
@@ -127,7 +133,7 @@ Button(w,Rect((w.bounds.width/1.25) - (w.bounds.height/6),w.bounds.height*0.5,w.
 	}
 );
 //// Add save sequences option =========================================================== ////
-Button(w,Rect((w.bounds.width/1.25) - (w.bounds.height/6),w.bounds.height*0.65,w.bounds.height/4,w.bounds.height/12))
+Button(w,Rect((w.bounds.width/1.25) - (w.bounds.height/6),w.bounds.height*0.575,w.bounds.height/4,w.bounds.height/12))
 .states_([
 ["save sequence",Color.white,Color.black]
 ])
@@ -170,13 +176,34 @@ Button(w,Rect((w.bounds.width/1.25) - (w.bounds.height/6),w.bounds.height*0.65,w
 			f.close;
 	})
 });
-~saveTextField = TextField(w,Rect(w.bounds.width*0.15,w.bounds.height*0.65,w.bounds.height/2.5,w.bounds.height/12))
+~saveTextField = TextField(w,Rect(w.bounds.width*0.15,w.bounds.height*0.575,w.bounds.height/2.5,w.bounds.height/12))
 .valueAction_(~saveFileName)
 .action_(
 	{|obj|
 		~saveFileName = obj.value;
 	}
 );
+//// rec option =========================================================== ////
+~recButton = Button(w,Rect((w.bounds.width/1.25) - (w.bounds.height/6),w.bounds.height*0.7,w.bounds.height/4,w.bounds.height/12))
+.states_([["rec", Color.black, Color.new(0.3,0.9,0.3,1.0)], ["stop rec", Color.white, Color.new(0.9,0.2,0.2,1.0)]])
+	.action_({arg org;
+		if(~isRecording,{
+			~wavRecorder.stopRecording;
+			~isRecording = false;
+		},{
+		~wavRecorder.filePrefix = ~recFileName++"_";
+			~wavRecorder.record;
+			~isRecording = true;
+		});
+	});
+TextField(w,Rect(w.bounds.width*0.15,w.bounds.height*0.7,w.bounds.height/2.5,w.bounds.height/12))
+.valueAction_(~recFileName)
+.action_(
+	{|obj|
+		~recFileName = obj.value;
+	}
+);
+//// Close window ======================================================================= ////
 w.onClose = {
 	Window.closeAll;
 	~activeMolecules.do{arg mIdx; Pbindef(mIdx.asSymbol).stop};
@@ -184,6 +211,7 @@ w.onClose = {
 	~activeMolecules.do{arg idx; ~activationDict[idx.asSymbol] = false};
 	~activeMolecules = [];
 	~repetitionIdx = 2;
+	s.quit;
 };
 //// ==================================================================================== ////
 )

@@ -48,8 +48,14 @@ baseScale = baseFrequency*(2**(((-4*~numberOfSemitones),((-4*~numberOfSemitones)
 		minIdx = ((~scale[molecule.asSymbol][sFreqIdx] - baseScale).abs).minIndex;
 		~scale[molecule.asSymbol][sFreqIdx] = baseScale[minIdx]
 	};
-	if(~flagScaleSpectrum,{~spectrum[molecule.asSymbol] = ~scale[molecule.asSymbol]/(~scale[molecule.asSymbol].minItem)},
-		{~spectrum[molecule.asSymbol] = ~frequency[molecule.asSymbol]/(~frequency[molecule.asSymbol].minItem)});
+	~scale[molecule.asSymbol] = ~scale[molecule.asSymbol].as(Set).as(Array).sort;
+	if(~flagScaleSpectrum,{
+		~spectrum[molecule.asSymbol] = ~scale[molecule.asSymbol];
+	},
+		{
+		~spectrum[molecule.asSymbol] = ~frequency[molecule.asSymbol].as(Set).as(Array).sort;
+	});
+	~spectrum[molecule.asSymbol] = ~spectrum[molecule.asSymbol]/(~spectrum[molecule.asSymbol].minItem)
 };
 "Sound parameters were successfully extracted from the database\n".postln;
 "______________________________________________________________\n".postln;
